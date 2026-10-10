@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "exit 0"
+    "build": "mkdir -p dist && cp -R index.html assets _headers dist/"
   }
 }
