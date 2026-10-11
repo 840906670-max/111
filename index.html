@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#b9dce2">
 <title>刘小昱的海岛</title>
 <style>
@@ -12,24 +15,17 @@
 .page::before,.page::after{position:absolute;pointer-events:none;color:#fff7e5;opacity:.78;font:44px/1 Georgia,serif;content:"✦"}.page::before{left:4%;top:24%;transform:rotate(-16deg)}.page::after{right:4%;bottom:21%;color:#f7cfbb;transform:rotate(15deg)}
 .heading{z-index:2;min-height:58px;text-align:center}.eyebrow{display:block;margin-bottom:2px;color:#5b8c95;font-size:10px;letter-spacing:.25em}.heading h1{margin:0;color:#276477;font:400 clamp(27px,3.7vw,42px)/1.16 "Smiley Sans","Microsoft YaHei",sans-serif;letter-spacing:.04em;white-space:nowrap}
 .scene{position:relative;z-index:1;width:min(calc(100vw - 32px),calc((100dvh - 126px)*16/9));aspect-ratio:16/9;max-height:calc(100dvh - 126px);overflow:hidden;border:4px solid #fff9e9;border-radius:20px;background:#88bed0;box-shadow:0 0 0 8px #fff9e966,0 18px 45px #356a793d;isolation:isolate;touch-action:manipulation;cursor:default;outline:none;-webkit-tap-highlight-color:transparent}
-.scene::before{position:absolute;z-index:3;inset:0;content:"";pointer-events:none;opacity:0;background:linear-gradient(112deg,transparent 26%,#fff9e97a 47%,transparent 66%);transform:translateX(-42%);transition:opacity .14s ease}
 .scene::after{content:"";position:absolute;z-index:4;inset:6px;border:1px dashed #fff8e9b0;border-radius:11px;pointer-events:none}
-.scene.is-transitioning::before{opacity:1;animation:card-glint .52s ease-out both}
-@keyframes card-glint{from{transform:translateX(-54%)}to{transform:translateX(54%)}}
 .video-layer{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;pointer-events:none;opacity:0;transform:scale(1.01);transition:none}
 .video-layer.is-current{opacity:1;transform:translate3d(0,0,0) scale(1)}
-.video-layer.is-entering{z-index:2;opacity:0;transform:translate3d(13%,1%,0) rotate(1.8deg) scale(.965);transition:transform .48s cubic-bezier(.18,.82,.25,1),opacity .32s ease-out}
-.scene.is-transitioning .video-layer.is-entering{opacity:1;transform:translate3d(0,0,0) rotate(0) scale(1)}
-.video-layer.is-leaving{z-index:1;transition:transform .48s cubic-bezier(.18,.82,.25,1),opacity .34s ease-out}
-.scene.is-transitioning .video-layer.is-leaving{opacity:.28;transform:translate3d(-5%,0,0) rotate(-.8deg) scale(.985)}
 .controls{position:absolute;z-index:5;left:0;right:0;bottom:12px;display:flex;justify-content:space-between;align-items:center;padding:0 12px;pointer-events:none}
 .control-button,.sound-button{min-height:36px;padding:7px 13px;border:1px solid #fff9e9;border-radius:999px;color:#276477;background:#fff9e9e8;box-shadow:0 3px 10px #356a7926;font:inherit;font-size:12px;letter-spacing:.02em;cursor:pointer;pointer-events:auto;touch-action:manipulation}
 .control-button:hover,.sound-button:hover{background:#fff}.control-button:focus-visible,.sound-button:focus-visible{outline:2px solid #276477;outline-offset:2px}.control-button[aria-pressed=true]{background:#276477;color:#fff9e9}
 .sound-button{position:absolute;z-index:5;top:12px;right:12px;min-height:32px;padding:6px 11px;font-size:11px}.sound-button[aria-pressed=true]{background:#276477;color:#fff9e9}
 .loading{position:absolute;z-index:6;top:50%;left:50%;transform:translate(-50%,-50%);width:max-content;max-width:80%;margin:0;padding:12px 18px;border:1px solid #fff8e9;border-radius:14px;color:#265c6b;background:#fff9e9ef;text-align:center;font-size:13px;line-height:1.6}.loading[hidden]{display:none}
 @media(max-width:620px){.page{gap:10px}.heading{min-height:50px}.scene{width:calc(100vw - 20px);max-height:none;border-width:3px;border-radius:12px;box-shadow:0 0 0 4px #fff9e977,0 9px 25px #356a7933}.scene::after{inset:4px;border-radius:6px}.controls{bottom:9px;padding:0 8px}.control-button{min-height:34px;padding:6px 10px;font-size:11px}.sound-button{top:8px;right:8px;min-height:30px;padding:5px 9px;font-size:10px}.page::before{top:19%;left:7%;font-size:28px}.page::after{bottom:19%;right:7%;font-size:29px}}
-@media (orientation:landscape) and (max-width:1000px) and (max-height:650px){html,body{background:#000}.page{display:block;padding:0;background:#000}.heading,.page::before,.page::after{display:none}.scene{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:none;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none}.scene::after{display:none}.controls{bottom:max(12px,env(safe-area-inset-bottom));padding-right:max(12px,env(safe-area-inset-right));padding-left:max(12px,env(safe-area-inset-left))}.sound-button{top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right))}}
-@media (orientation:portrait) and (max-width:620px){.scene{width:calc(100vw - 20px);max-height:none}.controls{bottom:9px;padding:0 8px}.control-button{min-height:34px;padding:6px 10px;font-size:11px}}
+@media (orientation:landscape) and (max-width:1000px) and (max-height:650px),(orientation:landscape) and (pointer:coarse) and (max-width:1366px) and (max-height:1024px){html,body{background:#000}.page{display:block;padding:0;background:#000}.heading,.page::before,.page::after{display:none}.scene{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:none;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none}.scene::after{display:none}.controls{bottom:max(12px,env(safe-area-inset-bottom));padding-right:max(12px,env(safe-area-inset-right));padding-left:max(12px,env(safe-area-inset-left))}.sound-button{top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right))}}
+@media (orientation:portrait) and (max-width:1024px){.page{grid-template-rows:auto auto;gap:10px;padding:max(14px,env(safe-area-inset-top)) 10px max(14px,env(safe-area-inset-bottom))}.heading{min-height:55px}.heading h1{font-size:clamp(25px,7vw,38px)}.scene{width:auto;height:min(calc(100dvh - 104px),calc((100vw - 20px)*16/9));max-width:calc(100vw - 20px);max-height:none;aspect-ratio:9/16;border-width:3px;border-radius:18px;box-shadow:0 0 0 5px #fff9e977,0 14px 35px #356a7938}.video-layer{object-position:50% 50%;transform:none}.scene.has-friend .video-layer{object-position:58% 50%}.scene::after{inset:5px;border-radius:11px}.controls{bottom:10px;padding:0 10px}.control-button{min-height:34px;padding:6px 10px;font-size:11px}.sound-button{top:10px;right:10px}}
 </style>
 </head>
 <body>
@@ -38,7 +34,6 @@
 <section class="scene" id="scene" role="button" tabindex="0" aria-label="点击画面切换动作" aria-busy="true">
 <video id="island-video" class="video-layer is-current" poster="assets/rendered1080/poster.jpg" autoplay muted loop playsinline preload="auto" width="1920" height="1080" aria-label="完整渲染的海岛动画"></video>
 <video id="incoming-video" class="video-layer" muted loop playsinline preload="metadata" width="1920" height="1080" aria-hidden="true"></video>
-<p class="loading" id="loading" role="status" hidden></p>
 <div class="controls" aria-label="动画控制"><button class="control-button action-switch" id="action-switch" type="button" aria-label="切换动作">点击画面</button><button class="control-button invite" id="invite-friend" type="button" aria-pressed="false">邀请他上岛</button></div>
 <button class="sound-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="开启环境音">开启声音</button>
 <noscript><p class="loading">请开启 JavaScript 观看动画。</p></noscript>
@@ -49,61 +44,73 @@ const actions=['yobro','walk','bow','basketball','thoughtful','like','defiant','
 const scene=document.getElementById('scene');
 const actionSwitch=document.getElementById('action-switch');
 const invite=document.getElementById('invite-friend');
-const loading=document.getElementById('loading');
 const soundToggle=document.getElementById('sound-toggle');
 let activeVideo=document.getElementById('island-video');
 let standbyVideo=document.getElementById('incoming-video');
-let actionIndex=1,withFriend=false,requestId=0,isChanging=false,hasLoaded=false,loadingTimer=0,transitionTimer=0,loadTimer=0,warmTimer=0;
+let actionIndex=1,withFriend=false,requestId=0,isChanging=false,hasLoaded=false,loadTimer=0,readyTimer=0,preloadTimer=0;
 let audioContext,masterGain,audioStarted=false,audioMuted=false,chimeTimer=0;
 const qualitySetting=new URLSearchParams(location.search).get('quality');
 const detectedMobile=/MicroMessenger|iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(window.matchMedia('(pointer:coarse)').matches&&window.matchMedia('(max-width:1366px)').matches);
 const mobilePlayback=qualitySetting==='mobile'||(qualitySetting!=='high'&&detectedMobile);
 const videoFolder=mobilePlayback?'assets/renderedMobile':'assets/rendered1080';
-const warmedSources=new Set();
-function sourceFor(index=actionIndex,friend=withFriend){return videoFolder+'/'+actions[index]+'-'+(friend?'duo':'solo')+'.mp4'}
-function warmMobileSources(){
-  clearTimeout(warmTimer);
-  if(!mobilePlayback||!window.fetch||document.hidden)return;
-  const queue=[sourceFor((actionIndex+1)%actions.length,withFriend),sourceFor(actionIndex,!withFriend)];
-  warmTimer=setTimeout(()=>{
-    const loadAt=position=>{
-      if(position>=queue.length||document.hidden)return;
-      const url=queue[position];
-      if(warmedSources.has(url)){loadAt(position+1);return}
-      warmedSources.add(url);
-      fetch(url,{cache:'force-cache',credentials:'same-origin'}).then(response=>{
-        if(!response.ok)throw new Error('preload failed');
-        return response.arrayBuffer();
-      }).catch(()=>warmedSources.delete(url)).then(()=>loadAt(position+1));
-    };
-    loadAt(0);
-  },600);
+const assetVersion='20261011c';
+function sourceFor(index=actionIndex,friend=withFriend){return videoFolder+'/'+actions[index]+'-'+(friend?'duo':'solo')+'.mp4?v='+assetVersion}
+function bufferedAhead(element){
+  if(!Number.isFinite(element.currentTime)||!element.buffered)return 0;
+  for(let index=0;index<element.buffered.length;index+=1){
+    if(element.buffered.start(index)<=element.currentTime+.08&&element.buffered.end(index)>=element.currentTime)return element.buffered.end(index)-element.currentTime;
+  }
+  return 0;
 }
-function delayLoading(){
-  clearTimeout(loadingTimer);
-  loading.hidden=true;
-}
-function stopLoading(){
-  clearTimeout(loadingTimer);
-  loading.hidden=true;
-  scene.setAttribute('aria-busy','false');
+function hasSafeBuffer(element,seconds){
+  if(!Number.isFinite(element.duration)||element.duration<=0)return element.readyState>=3;
+  const remaining=Math.max(.35,element.duration-element.currentTime-.1);
+  return bufferedAhead(element)>=Math.min(seconds,remaining);
 }
 function clearVideoEvents(element){
   element.onloadedmetadata=null;
   element.onloadeddata=null;
   element.oncanplay=null;
+  element.oncanplaythrough=null;
+  element.onprogress=null;
+  element.ontimeupdate=null;
   element.onplaying=null;
   element.onerror=null;
 }
 function releaseVideo(element){
   element.pause();
   clearVideoEvents(element);
+  element.removeAttribute('data-source');
   element.removeAttribute('src');
+  element.preload='metadata';
   element.load();
+}
+function scheduleNextPreload(){
+  clearTimeout(preloadTimer);
+  if(!mobilePlayback||document.hidden||isChanging)return;
+  const nextSource=sourceFor((actionIndex+1)%actions.length,withFriend);
+  const candidate=standbyVideo;
+  const attempt=()=>{
+    if(document.hidden||isChanging||candidate!==standbyVideo)return;
+    if(!hasSafeBuffer(activeVideo,4)){
+      preloadTimer=setTimeout(attempt,700);
+      return;
+    }
+    if(candidate.dataset.source===nextSource)return;
+    releaseVideo(candidate);
+    candidate.preload='auto';
+    candidate.muted=true;
+    candidate.playsInline=true;
+    candidate.dataset.source=nextSource;
+    candidate.src=nextSource;
+    candidate.load();
+  };
+  preloadTimer=setTimeout(attempt,900);
 }
 function updateInvite(){
   invite.setAttribute('aria-pressed',String(withFriend));
   invite.textContent=withFriend?'让他回去':'邀请他上岛';
+  scene.classList.toggle('has-friend',withFriend);
 }
 function finishInitialLoad(target,id,nextIndex,nextFriend){
   if(id!==requestId)return;
@@ -112,12 +119,13 @@ function finishInitialLoad(target,id,nextIndex,nextFriend){
   updateInvite();
   target.className='video-layer is-current';
   target.removeAttribute('aria-hidden');
+  target.play().catch(()=>{});
   hasLoaded=true;
   isChanging=false;
-  stopLoading();
-  warmMobileSources();
+  scene.setAttribute('aria-busy','false');
+  scheduleNextPreload();
 }
-function finishTransition(target,id,nextIndex,nextFriend){
+function finishSwitch(target,id,nextIndex,nextFriend){
   if(id!==requestId)return;
   const previous=activeVideo;
   actionIndex=nextIndex;
@@ -127,44 +135,36 @@ function finishTransition(target,id,nextIndex,nextFriend){
   standbyVideo=previous;
   activeVideo.className='video-layer is-current';
   activeVideo.removeAttribute('aria-hidden');
+  activeVideo.play().catch(()=>{});
   standbyVideo.className='video-layer';
   standbyVideo.setAttribute('aria-hidden','true');
-  scene.classList.remove('is-transitioning');
   releaseVideo(standbyVideo);
   isChanging=false;
-  stopLoading();
-  warmMobileSources();
-}
-function beginCardTransition(target,id,nextIndex,nextFriend){
-  clearTimeout(loadingTimer);
-  loading.hidden=true;
-  target.className='video-layer is-entering';
-  target.removeAttribute('aria-hidden');
-  target.offsetWidth;
-  activeVideo.classList.add('is-leaving');
-  scene.classList.add('is-transitioning');
-  clearTimeout(transitionTimer);
-  transitionTimer=setTimeout(()=>finishTransition(target,id,nextIndex,nextFriend),520);
+  scene.setAttribute('aria-busy','false');
+  scheduleNextPreload();
 }
 function failLoad(target,id){
   if(id!==requestId)return;
   clearTimeout(loadTimer);
+  clearTimeout(readyTimer);
   clearVideoEvents(target);
   if(target!==activeVideo)releaseVideo(target);
   isChanging=false;
-  clearTimeout(loadingTimer);
-  loading.hidden=true;
   scene.setAttribute('aria-busy','false');
+  scheduleNextPreload();
 }
 function loadAction(nextIndex,nextFriend,keepTime=false){
   if(isChanging)return;
+  clearTimeout(preloadTimer);
+  clearTimeout(readyTimer);
   const id=++requestId;
   const previousTime=keepTime&&Number.isFinite(activeVideo.currentTime)?activeVideo.currentTime:0;
   const target=hasLoaded?standbyVideo:activeVideo;
   const nextSource=sourceFor(nextIndex,nextFriend);
+  const alreadyPreloaded=target.dataset.source===nextSource;
   isChanging=true;
-  delayLoading();
   scene.setAttribute('aria-busy','true');
+  if(!alreadyPreloaded)releaseVideo(target);
   target.muted=true;
   target.loop=true;
   target.playsInline=true;
@@ -172,6 +172,18 @@ function loadAction(nextIndex,nextFriend,keepTime=false){
   target.setAttribute('playsinline','');
   target.setAttribute('webkit-playsinline','');
   clearVideoEvents(target);
+  const finishWhenStable=()=>{
+    if(id!==requestId)return;
+    if(!hasSafeBuffer(target,mobilePlayback?2.5:1.5)){
+      clearTimeout(readyTimer);
+      readyTimer=setTimeout(finishWhenStable,120);
+      return;
+    }
+    clearTimeout(loadTimer);
+    clearTimeout(readyTimer);
+    clearVideoEvents(target);
+    if(hasLoaded)finishSwitch(target,id,nextIndex,nextFriend);else finishInitialLoad(target,id,nextIndex,nextFriend);
+  };
   target.onloadedmetadata=()=>{
     if(id!==requestId||!keepTime||!target.duration)return;
     try{target.currentTime=previousTime%target.duration}catch(error){}
@@ -179,20 +191,26 @@ function loadAction(nextIndex,nextFriend,keepTime=false){
   const tryPlay=()=>{
     if(id!==requestId)return;
     target.play().catch(()=>{});
+    finishWhenStable();
   };
   target.onloadeddata=tryPlay;
   target.oncanplay=tryPlay;
+  target.oncanplaythrough=finishWhenStable;
+  target.onprogress=finishWhenStable;
+  target.ontimeupdate=finishWhenStable;
   target.onplaying=()=>{
     if(id!==requestId)return;
-    clearTimeout(loadTimer);
-    clearVideoEvents(target);
-    if(hasLoaded)beginCardTransition(target,id,nextIndex,nextFriend);else finishInitialLoad(target,id,nextIndex,nextFriend);
+    finishWhenStable();
   };
   target.onerror=()=>failLoad(target,id);
   clearTimeout(loadTimer);
-  loadTimer=setTimeout(()=>failLoad(target,id),12000);
-  target.src=nextSource;
-  target.load();
+  loadTimer=setTimeout(()=>failLoad(target,id),15000);
+  if(!alreadyPreloaded){
+    target.preload='auto';
+    target.dataset.source=nextSource;
+    target.src=nextSource;
+    target.load();
+  }
   target.play().catch(()=>{});
 }
 function nextAction(){
