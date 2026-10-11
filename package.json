@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "mkdir -p dist && cp -R index.html portrait.html landscape.html assets _headers dist/"
+    "build": "mkdir -p dist && cp -R index.html assets _headers dist/"
   }
 }
