@@ -5,6 +5,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#b9dce2">
 <title>刘小昱的海岛</title>
+<script>
+const requestedIslandView=new URLSearchParams(location.search).get('view');
+let islandView='landscape';
+function setIslandView(view){
+  islandView=view==='portrait'?'portrait':'landscape';
+  document.documentElement.classList.toggle('view-portrait',islandView==='portrait');
+  document.documentElement.classList.toggle('view-landscape',islandView==='landscape');
+  document.title='刘小昱的海岛 · '+(islandView==='portrait'?'竖屏版':'横屏版');
+  const portraitLink=document.getElementById('portrait-view');
+  const landscapeLink=document.getElementById('landscape-view');
+  if(portraitLink)portraitLink.toggleAttribute('aria-current',islandView==='portrait');
+  if(landscapeLink)landscapeLink.toggleAttribute('aria-current',islandView==='landscape');
+}
+const orientationMedia=window.matchMedia('(orientation:portrait)');
+setIslandView(requestedIslandView==='portrait'||requestedIslandView==='landscape'?requestedIslandView:(orientationMedia.matches?'portrait':'landscape'));
+if(requestedIslandView!=='portrait'&&requestedIslandView!=='landscape'){
+  const followOrientation=event=>setIslandView(event.matches?'portrait':'landscape');
+  if(orientationMedia.addEventListener)orientationMedia.addEventListener('change',followOrientation);else orientationMedia.addListener(followOrientation);
+}
+</script>
 <style>
 @font-face{font-family:"Smiley Sans";src:url("assets/fonts/SmileySans-Oblique.woff2") format("woff2");font-display:swap}
 :root{font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:#24505e;background:#b9dce2}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0}body{overflow:hidden}
@@ -16,28 +36,38 @@
 .scene::after{content:"";position:absolute;z-index:4;inset:6px;border:1px dashed #fff8e9b0;border-radius:11px;pointer-events:none}
 .scene.is-transitioning::before{opacity:1;animation:card-glint .52s ease-out both}
 @keyframes card-glint{from{transform:translateX(-54%)}to{transform:translateX(54%)}}
-.video-layer{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;pointer-events:none;opacity:0;transform:scale(1.01);transition:none}
-.video-layer.is-current{opacity:1;transform:translate3d(0,0,0) scale(1)}
-.video-layer.is-entering{z-index:2;opacity:0;transform:translate3d(13%,1%,0) rotate(1.8deg) scale(.965);transition:transform .48s cubic-bezier(.18,.82,.25,1),opacity .32s ease-out}
-.scene.is-transitioning .video-layer.is-entering{opacity:1;transform:translate3d(0,0,0) rotate(0) scale(1)}
-.video-layer.is-leaving{z-index:1;transition:transform .48s cubic-bezier(.18,.82,.25,1),opacity .34s ease-out}
-.scene.is-transitioning .video-layer.is-leaving{opacity:.28;transform:translate3d(-5%,0,0) rotate(-.8deg) scale(.985)}
+.video-layer{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;pointer-events:none;opacity:1;transform:translate3d(0,0,0) scale(1);transition:transform .36s ease,opacity .3s ease}
+.video-layer.is-loading{opacity:0;transform:scale(1.012)}
+.scene.is-transitioning .video-layer{opacity:1;transform:translate3d(0,0,0) scale(1)}
+.transition-card{position:absolute;z-index:2;inset:0;display:block;pointer-events:none;opacity:0;transition:opacity .12s ease}
+.draw-card{position:absolute;left:2%;width:96%;height:58%;overflow:hidden;border:2px solid #fff9e9dc;border-radius:16px;background:linear-gradient(135deg,#fef5e9 0%,#bde3e0 50%,#f5b98e 100%);box-shadow:0 12px 26px #224c5760;will-change:transform,opacity}
+.draw-card::before{position:absolute;inset:0;display:grid;place-items:center;content:"✦";color:#fff9e9ad;font:clamp(50px,12vw,140px)/1 Georgia,serif;text-shadow:0 3px 12px #34717d63}
+.draw-card-top{top:-7%;transform:translate3d(0,0,0) rotate(-1.4deg)}
+.draw-card-bottom{bottom:-7%;transform:translate3d(0,0,0) rotate(1.4deg)}
+.transition-card.is-visible{opacity:1}
+.transition-card.is-cutting .draw-card-top{opacity:0;transform:translate3d(0,-116%,0) rotate(-4deg);transition:transform .52s cubic-bezier(.18,.82,.25,1),opacity .3s ease-out}
+.transition-card.is-cutting .draw-card-bottom{opacity:0;transform:translate3d(0,116%,0) rotate(4deg);transition:transform .52s cubic-bezier(.18,.82,.25,1),opacity .3s ease-out}
 .controls{position:absolute;z-index:5;left:0;right:0;bottom:12px;display:flex;justify-content:space-between;align-items:center;padding:0 12px;pointer-events:none}
 .control-button,.sound-button{min-height:36px;padding:7px 13px;border:1px solid #fff9e9;border-radius:999px;color:#276477;background:#fff9e9e8;box-shadow:0 3px 10px #356a7926;font:inherit;font-size:12px;letter-spacing:.02em;cursor:pointer;pointer-events:auto;touch-action:manipulation}
 .control-button:hover,.sound-button:hover{background:#fff}.control-button:focus-visible,.sound-button:focus-visible{outline:2px solid #276477;outline-offset:2px}.control-button[aria-pressed=true]{background:#276477;color:#fff9e9}
 .sound-button{position:absolute;z-index:5;top:12px;right:12px;min-height:32px;padding:6px 11px;font-size:11px}.sound-button[aria-pressed=true]{background:#276477;color:#fff9e9}
 .loading{position:absolute;z-index:6;top:50%;left:50%;transform:translate(-50%,-50%);width:max-content;max-width:80%;margin:0;padding:12px 18px;border:1px solid #fff8e9;border-radius:14px;color:#265c6b;background:#fff9e9ef;text-align:center;font-size:13px;line-height:1.6}.loading[hidden]{display:none}
-@media(max-width:620px){.page{gap:10px}.heading{min-height:50px}.scene{width:calc(100vw - 20px);max-height:none;border-width:3px;border-radius:12px;box-shadow:0 0 0 4px #fff9e977,0 9px 25px #356a7933}.scene::after{inset:4px;border-radius:6px}.controls{bottom:9px;padding:0 8px}.control-button{min-height:34px;padding:6px 10px;font-size:11px}.sound-button{top:8px;right:8px;min-height:30px;padding:5px 9px;font-size:10px}.page::before{top:19%;left:7%;font-size:28px}.page::after{bottom:19%;right:7%;font-size:29px}}
-@media (orientation:landscape) and (max-width:1000px) and (max-height:650px){html,body{background:#000}.page{display:block;padding:0;background:#000}.heading,.page::before,.page::after{display:none}.scene{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:none;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none}.scene::after{display:none}.controls{bottom:max(12px,env(safe-area-inset-bottom));padding-right:max(12px,env(safe-area-inset-right));padding-left:max(12px,env(safe-area-inset-left))}.sound-button{top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right))}}
-@media (orientation:portrait) and (max-width:620px){.scene{width:calc(100vw - 20px);max-height:none}.controls{bottom:9px;padding:0 8px}.control-button{min-height:34px;padding:6px 10px;font-size:11px}}
+.view-switcher{position:absolute;z-index:7;top:12px;left:12px;display:flex;padding:3px;border:1px solid #fff9e9c7;border-radius:999px;background:#ffffffdc;box-shadow:0 3px 10px #356a7921}.view-switcher a{display:block;padding:5px 9px;border-radius:999px;color:#276477;text-decoration:none;font-size:10px;line-height:1.1;letter-spacing:.04em;white-space:nowrap}.view-switcher a[aria-current=page]{color:#fff9e9;background:#276477}.view-switcher a:focus-visible{outline:2px solid #276477;outline-offset:2px}
+html.view-portrait .page{grid-template-rows:auto auto;gap:10px;padding:max(14px,env(safe-area-inset-top)) 10px max(14px,env(safe-area-inset-bottom));align-content:center}
+html.view-portrait .heading{min-height:55px}html.view-portrait .heading h1{font-size:clamp(25px,7vw,38px)}
+html.view-portrait .scene{width:auto;height:min(calc(100dvh - 104px),calc((100vw - 20px)*16/9));max-width:calc(100vw - 20px);max-height:none;aspect-ratio:9/16;border-width:3px;border-radius:20px;box-shadow:0 0 0 5px #fff9e977,0 14px 35px #356a7938}
+html.view-portrait .video-layer{object-position:50% 50%}html.view-portrait .scene::after{inset:5px;border-radius:12px}html.view-portrait .controls{bottom:10px;padding:0 10px}html.view-portrait .sound-button{top:10px;right:10px}html.view-portrait .view-switcher{top:10px;left:10px}
+@media(max-width:620px){.page{gap:10px}.heading{min-height:50px}.scene{width:calc(100vw - 20px);max-height:none;border-width:3px;border-radius:12px;box-shadow:0 0 0 4px #fff9e977,0 9px 25px #356a7933}.scene::after{inset:4px;border-radius:6px}.controls{bottom:9px;padding:0 8px}.control-button{min-height:34px;padding:6px 10px;font-size:11px}.sound-button{top:8px;right:8px;min-height:30px;padding:5px 9px;font-size:10px}.page::before{top:19%;left:7%;font-size:28px}.page::after{bottom:19%;right:7%;font-size:29px}html.view-portrait .scene{width:auto;height:min(calc(100dvh - 100px),calc((100vw - 20px)*16/9));border-radius:18px}html.view-portrait .view-switcher{top:8px;left:8px}html.view-portrait .view-switcher a{padding:5px 8px}}
+@media (orientation:landscape) and (max-width:1000px) and (max-height:650px){html:not(.view-portrait),html:not(.view-portrait) body{background:#000}html:not(.view-portrait) .page{display:block;padding:0;background:#000}html:not(.view-portrait) .heading,html:not(.view-portrait) .page::before,html:not(.view-portrait) .page::after{display:none}html:not(.view-portrait) .scene{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-height:none;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none}html:not(.view-portrait) .scene::after{display:none}html:not(.view-portrait) .controls{bottom:max(12px,env(safe-area-inset-bottom));padding-right:max(12px,env(safe-area-inset-right));padding-left:max(12px,env(safe-area-inset-left))}html:not(.view-portrait) .sound-button{top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right))}html:not(.view-portrait) .view-switcher{top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left))}}
 </style>
 </head>
 <body>
 <main class="page">
 <header class="heading"><span class="eyebrow">SUMMER ISLAND</span><h1>刘小昱的海岛</h1></header>
 <section class="scene" id="scene" role="button" tabindex="0" aria-label="点击画面切换动作" aria-busy="true">
-<video id="island-video" class="video-layer is-current" poster="assets/rendered1080/poster.jpg" autoplay muted loop playsinline preload="auto" width="1920" height="1080" aria-label="完整渲染的海岛动画"></video>
-<video id="incoming-video" class="video-layer" muted loop playsinline preload="metadata" width="1920" height="1080" aria-hidden="true"></video>
+<nav class="view-switcher" aria-label="画面版本切换"><a id="landscape-view" href="?view=landscape">横屏版</a><a id="portrait-view" href="?view=portrait">竖屏版</a></nav>
+<video id="island-video" class="video-layer" poster="assets/rendered1080/poster.jpg" autoplay muted loop playsinline preload="auto" width="1920" height="1080" aria-label="完整渲染的海岛动画"></video>
+<div id="transition-card" class="transition-card" aria-hidden="true"><span class="draw-card draw-card-top"></span><span class="draw-card draw-card-bottom"></span></div>
 <p class="loading" id="loading" role="status">小岛正在准备中…</p>
 <div class="controls" aria-label="动画控制"><button class="control-button action-switch" id="action-switch" type="button" aria-label="切换动作">点击画面</button><button class="control-button invite" id="invite-friend" type="button" aria-pressed="false">邀请他上岛</button></div>
 <button class="sound-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="开启环境音">开启声音</button>
@@ -51,11 +81,12 @@ const actionSwitch=document.getElementById('action-switch');
 const invite=document.getElementById('invite-friend');
 const loading=document.getElementById('loading');
 const soundToggle=document.getElementById('sound-toggle');
-let activeVideo=document.getElementById('island-video');
-let standbyVideo=document.getElementById('incoming-video');
-let actionIndex=1,withFriend=false,requestId=0,isChanging=false,hasLoaded=false,loadingTimer=0,transitionTimer=0;
-let audioContext,masterGain,audioStarted=false,audioMuted=false,chimeTimer=0;
-function source(){return 'assets/rendered1080/'+actions[actionIndex]+'-'+(withFriend?'duo':'solo')+'.mp4'}
+const video=document.getElementById('island-video');
+const transitionCard=document.getElementById('transition-card');
+setIslandView(islandView);
+let actionIndex=1,withFriend=false,requestId=0,isChanging=false,hasLoaded=false,loadingTimer=0,loadTimer=0,transitionTimer=0,revealTimer=0,recoveryTimer=0,recoveryTimeout=0,cardShownAt=0,currentSource='';
+let audioContext,masterGain,audioStarted=false,audioMuted=false,chimeTimer=0,melodyStep=0;
+function sourceFor(index=actionIndex,friend=withFriend){return 'assets/rendered1080/'+actions[index]+'-'+(friend?'duo':'solo')+'.mp4'}
 function delayLoading(){
   clearTimeout(loadingTimer);
   loading.hidden=true;
@@ -66,88 +97,155 @@ function stopLoading(){
   loading.hidden=true;
   scene.setAttribute('aria-busy','false');
 }
-function releaseVideo(element){
-  element.pause();
-  element.onloadedmetadata=null;
-  element.oncanplay=null;
-  element.onerror=null;
-  element.removeAttribute('src');
-  element.load();
+function clearVideoEvents(){
+  video.onloadedmetadata=null;
+  video.onloadeddata=null;
+  video.oncanplay=null;
+  video.onerror=null;
 }
-function finishInitialLoad(target,id){
-  if(id!==requestId)return;
-  target.className='video-layer is-current';
-  target.removeAttribute('aria-hidden');
-  hasLoaded=true;
-  isChanging=false;
-  stopLoading();
-}
-function finishTransition(target,id){
-  if(id!==requestId)return;
-  const previous=activeVideo;
-  activeVideo=target;
-  standbyVideo=previous;
-  activeVideo.className='video-layer is-current';
-  activeVideo.removeAttribute('aria-hidden');
-  standbyVideo.className='video-layer';
-  standbyVideo.setAttribute('aria-hidden','true');
+function clearTransitionCard(){
+  clearTimeout(transitionTimer);
+  clearTimeout(revealTimer);
   scene.classList.remove('is-transitioning');
-  releaseVideo(standbyVideo);
-  isChanging=false;
-  stopLoading();
+  transitionCard.className='transition-card';
 }
-function beginCardTransition(target,id){
+function showTransitionCard(){
+  if(!hasLoaded)return false;
+  cardShownAt=performance.now();
+  transitionCard.className='transition-card is-visible is-waiting';
+  return true;
+}
+function updateInvite(){
+  invite.setAttribute('aria-pressed',String(withFriend));
+  invite.textContent=withFriend?'让他回去':'邀请他上岛';
+}
+function finishChange(id,cardCaptured){
+  if(id!==requestId)return;
+  video.classList.remove('is-loading');
+  if(!cardCaptured){
+    isChanging=false;
+    stopLoading();
+    return;
+  }
   clearTimeout(loadingTimer);
   loading.hidden=true;
-  target.className='video-layer is-entering';
-  target.removeAttribute('aria-hidden');
-  target.offsetWidth;
-  activeVideo.classList.add('is-leaving');
-  scene.classList.add('is-transitioning');
-  clearTimeout(transitionTimer);
-  transitionTimer=setTimeout(()=>finishTransition(target,id),520);
+  const cutCards=()=>{
+    if(id!==requestId)return;
+    transitionCard.classList.remove('is-waiting');
+    transitionCard.classList.add('is-cutting');
+    scene.classList.add('is-transitioning');
+    clearTimeout(transitionTimer);
+    transitionTimer=setTimeout(()=>{
+      if(id!==requestId)return;
+      clearTransitionCard();
+      isChanging=false;
+      stopLoading();
+    },520);
+  };
+  const waitForCards=Math.max(0,220-(performance.now()-cardShownAt));
+  clearTimeout(revealTimer);
+  revealTimer=setTimeout(cutCards,waitForCards);
 }
-function playCurrent(keepTime=false){
+function recoverPrevious(previousSource,previousTime){
+  if(!previousSource){
+    clearTransitionCard();
+    video.classList.remove('is-loading');
+    isChanging=false;
+    scene.setAttribute('aria-busy','false');
+    return;
+  }
+  const recoveryId=++requestId;
+  clearVideoEvents();
+  video.onloadedmetadata=()=>{if(recoveryId===requestId&&video.duration){try{video.currentTime=previousTime%video.duration}catch(error){}}};
+  const recovered=()=>{
+    if(recoveryId!==requestId)return;
+    clearTimeout(recoveryTimeout);
+    clearVideoEvents();
+    video.classList.remove('is-loading');
+    video.play().catch(()=>{});
+    clearTransitionCard();
+    isChanging=false;
+    scene.setAttribute('aria-busy','false');
+    clearTimeout(recoveryTimer);
+    recoveryTimer=setTimeout(()=>{if(!isChanging)loading.hidden=true},900);
+  };
+  video.onloadeddata=recovered;
+  video.oncanplay=recovered;
+  video.onerror=()=>{
+    if(recoveryId!==requestId)return;
+    clearTimeout(recoveryTimeout);
+    clearVideoEvents();
+    video.classList.remove('is-loading');
+    clearTransitionCard();
+    isChanging=false;
+    scene.setAttribute('aria-busy','false');
+  };
+  clearTimeout(recoveryTimeout);
+  recoveryTimeout=setTimeout(()=>{
+    if(recoveryId!==requestId)return;
+    clearVideoEvents();
+    video.classList.remove('is-loading');
+    clearTransitionCard();
+    isChanging=false;
+    scene.setAttribute('aria-busy','false');
+    loading.textContent='网络较慢，请稍后再试。';
+    loading.hidden=false;
+  },6000);
+  video.src=previousSource;
+  video.load();
+}
+function handleLoadFailure(id,previousSource,previousTime){
+  if(id!==requestId)return;
+  clearTimeout(loadTimer);
+  clearTimeout(loadingTimer);
+  loading.textContent='画面加载较慢，请再点一次。';
+  loading.hidden=false;
+  recoverPrevious(previousSource,previousTime);
+}
+function loadAction(nextIndex,nextWithFriend,keepTime=false){
   if(isChanging)return;
   const id=++requestId;
-  const previousTime=keepTime&&Number.isFinite(activeVideo.currentTime)?activeVideo.currentTime:0;
-  const target=hasLoaded?standbyVideo:activeVideo;
+  const previousSource=currentSource;
+  const previousTime=keepTime&&Number.isFinite(video.currentTime)?video.currentTime:0;
+  const nextSource=sourceFor(nextIndex,nextWithFriend);
+  const cardCaptured=showTransitionCard();
   isChanging=true;
   delayLoading();
   scene.setAttribute('aria-busy','true');
-  target.muted=true;
-  target.onloadedmetadata=()=>{
-    if(id!==requestId||!keepTime||!target.duration)return;
-    try{target.currentTime=previousTime%target.duration}catch(error){}
+  video.pause();
+  video.classList.add('is-loading');
+  let ready=false;
+  video.onloadedmetadata=()=>{
+    if(id!==requestId||!keepTime||!video.duration)return;
+    try{video.currentTime=previousTime%video.duration}catch(error){}
   };
-  target.oncanplay=()=>{
-    if(id!==requestId)return;
-    target.onloadedmetadata=null;
-    target.oncanplay=null;
-    target.onerror=null;
-    target.play().catch(()=>{});
-    if(hasLoaded)beginCardTransition(target,id);else finishInitialLoad(target,id);
+  const readyToPlay=()=>{
+    if(id!==requestId||ready)return;
+    ready=true;
+    clearTimeout(loadTimer);
+    clearVideoEvents();
+    actionIndex=nextIndex;
+    withFriend=nextWithFriend;
+    currentSource=nextSource;
+    hasLoaded=true;
+    updateInvite();
+    video.play().catch(()=>{});
+    finishChange(id,cardCaptured);
   };
-  target.onerror=()=>{
-    if(id!==requestId)return;
-    isChanging=false;
-    loading.textContent='这个动作还在制作中，请再试一次。';
-    clearTimeout(loadingTimer);
-    loading.hidden=false;
-    scene.setAttribute('aria-busy','false');
-    if(target!==activeVideo)releaseVideo(target);
-  };
-  target.src=source();
-  target.load();
-  target.play().catch(()=>{});
+  video.onloadeddata=readyToPlay;
+  video.oncanplay=readyToPlay;
+  video.onerror=()=>handleLoadFailure(id,previousSource,previousTime);
+  clearTimeout(loadTimer);
+  loadTimer=setTimeout(()=>handleLoadFailure(id,previousSource,previousTime),9000);
+  video.src=nextSource;
+  video.load();
 }
 function nextAction(){
   if(isChanging)return;
-  actionIndex=(actionIndex+1)%actions.length;
-  playCurrent();
+  loadAction((actionIndex+1)%actions.length,withFriend);
 }
 function createNoiseBuffer(context){
-  const buffer=context.createBuffer(1,context.sampleRate*4,context.sampleRate);
+  const buffer=context.createBuffer(1,context.sampleRate*2.5,context.sampleRate);
   const data=buffer.getChannelData(0);
   let last=0;
   for(let i=0;i<data.length;i+=1){
@@ -193,22 +291,31 @@ function buildAmbience(){
   drift.start();
   return true;
 }
+function playSoftNote(frequency,startAt){
+  const oscillator=audioContext.createOscillator();
+  const filter=audioContext.createBiquadFilter();
+  const gain=audioContext.createGain();
+  oscillator.type='triangle';
+  oscillator.frequency.value=frequency;
+  filter.type='lowpass';
+  filter.frequency.value=1800;
+  gain.gain.setValueAtTime(.0001,startAt);
+  gain.gain.exponentialRampToValueAtTime(.010,startAt+.045);
+  gain.gain.exponentialRampToValueAtTime(.0001,startAt+1.25);
+  oscillator.connect(filter).connect(gain).connect(masterGain);
+  oscillator.start(startAt);
+  oscillator.stop(startAt+1.3);
+}
 function scheduleChime(){
   clearTimeout(chimeTimer);
   if(!audioStarted||audioMuted||!audioContext)return;
+  const melody=[523.25,659.25,587.33,440,493.88,587.33,659.25,493.88];
   const now=audioContext.currentTime+.08;
-  const oscillator=audioContext.createOscillator();
-  const gain=audioContext.createGain();
-  const tones=[392,440,523.25,587.33,659.25];
-  oscillator.type='sine';
-  oscillator.frequency.value=tones[Math.floor(Math.random()*tones.length)];
-  gain.gain.setValueAtTime(.0001,now);
-  gain.gain.exponentialRampToValueAtTime(.012,now+.16);
-  gain.gain.exponentialRampToValueAtTime(.0001,now+3.1);
-  oscillator.connect(gain).connect(masterGain);
-  oscillator.start(now);
-  oscillator.stop(now+3.2);
-  chimeTimer=setTimeout(scheduleChime,8500+Math.random()*6500);
+  for(let note=0;note<3;note+=1){
+    playSoftNote(melody[(melodyStep+note)%melody.length],now+note*.36);
+  }
+  melodyStep=(melodyStep+3)%melody.length;
+  chimeTimer=setTimeout(scheduleChime,5200);
 }
 function updateSoundButton(){
   const audible=audioStarted&&!audioMuted;
@@ -237,28 +344,25 @@ function muteAmbience(){
 }
 function beginAmbientOnFirstTouch(){if(!audioStarted&&!audioMuted)startAmbience()}
 actionSwitch.addEventListener('click',()=>{beginAmbientOnFirstTouch();nextAction()});
-scene.addEventListener('click',event=>{if(event.target.closest('button'))return;beginAmbientOnFirstTouch();nextAction()});
+scene.addEventListener('click',event=>{if(event.target.closest('button,a'))return;beginAmbientOnFirstTouch();nextAction()});
 scene.addEventListener('keydown',event=>{if(event.target.closest('button'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();beginAmbientOnFirstTouch();nextAction()}});
 invite.addEventListener('click',()=>{
   if(isChanging)return;
   beginAmbientOnFirstTouch();
-  withFriend=!withFriend;
-  invite.setAttribute('aria-pressed',String(withFriend));
-  invite.textContent=withFriend?'让他回去':'邀请他上岛';
-  playCurrent(true);
+  loadAction(actionIndex,!withFriend,true);
 });
 soundToggle.addEventListener('click',()=>{if(audioStarted&&!audioMuted)muteAmbience();else startAmbience()});
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
-    activeVideo.pause();
+    video.pause();
     if(audioContext&&audioContext.state==='running')audioContext.suspend().catch(()=>{});
   }else{
-    activeVideo.play().catch(()=>{});
+    video.play().catch(()=>{});
     if(audioStarted&&!audioMuted&&audioContext)audioContext.resume().catch(()=>{});
   }
 });
 updateSoundButton();
-playCurrent();
+loadAction(actionIndex,withFriend);
 </script>
 </body>
 </html>
