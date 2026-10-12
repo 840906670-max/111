@@ -48,7 +48,7 @@ const soundToggle=document.getElementById('sound-toggle');
 let activeVideo=document.getElementById('island-video');
 let standbyVideo=document.getElementById('incoming-video');
 let actionIndex=1,withFriend=false,requestId=0,isChanging=false,hasLoaded=false,loadTimer=0,readyTimer=0,preloadTimer=0;
-let audioContext,masterGain,audioStarted=false,audioMuted=false,chimeTimer=0;
+let audioContext,masterGain,audioStarted=false,audioMuted=false,chimeTimer=0,guitarTimer=0,guitarStep=0;
 const qualitySetting=new URLSearchParams(location.search).get('quality');
 const detectedMobile=/MicroMessenger|iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(window.matchMedia('(pointer:coarse)').matches&&window.matchMedia('(max-width:1366px)').matches);
 const mobilePlayback=qualitySetting==='mobile'||(qualitySetting!=='high'&&detectedMobile);
@@ -281,6 +281,40 @@ function scheduleChime(){
   oscillator.stop(now+3.2);
   chimeTimer=setTimeout(scheduleChime,8500+Math.random()*6500);
 }
+function scheduleGuitar(){
+  clearTimeout(guitarTimer);
+  if(!audioStarted||audioMuted||!audioContext)return;
+  const now=audioContext.currentTime+.08;
+  const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];
+  const frequency=notes[guitarStep%notes.length];
+  guitarStep+=1;
+  const pluck=audioContext.createOscillator();
+  const body=audioContext.createOscillator();
+  const pluckGain=audioContext.createGain();
+  const bodyGain=audioContext.createGain();
+  const filter=audioContext.createBiquadFilter();
+  pluck.type='triangle';
+  pluck.frequency.setValueAtTime(frequency,now);
+  body.type='sine';
+  body.frequency.setValueAtTime(frequency*2,now);
+  filter.type='lowpass';
+  filter.frequency.value=1900;
+  filter.Q.value=.65;
+  pluckGain.gain.setValueAtTime(.0001,now);
+  pluckGain.gain.exponentialRampToValueAtTime(.028,now+.025);
+  pluckGain.gain.exponentialRampToValueAtTime(.0001,now+1.85);
+  bodyGain.gain.setValueAtTime(.0001,now);
+  bodyGain.gain.exponentialRampToValueAtTime(.006,now+.02);
+  bodyGain.gain.exponentialRampToValueAtTime(.0001,now+1.4);
+  pluck.connect(pluckGain).connect(filter);
+  body.connect(bodyGain).connect(filter);
+  filter.connect(masterGain);
+  pluck.start(now);
+  body.start(now);
+  pluck.stop(now+2);
+  body.stop(now+1.55);
+  guitarTimer=setTimeout(scheduleGuitar,2200);
+}
 function updateSoundButton(){
   const audible=audioStarted&&!audioMuted;
   soundToggle.setAttribute('aria-pressed',String(audible));
@@ -295,6 +329,7 @@ function startAmbience(){
     masterGain.gain.cancelScheduledValues(audioContext.currentTime);
     masterGain.gain.setTargetAtTime(.085,audioContext.currentTime,.7);
     scheduleChime();
+    scheduleGuitar();
     updateSoundButton();
   }).catch(()=>{});
 }
@@ -302,6 +337,7 @@ function muteAmbience(){
   if(!audioContext)return;
   audioMuted=true;
   clearTimeout(chimeTimer);
+  clearTimeout(guitarTimer);
   masterGain.gain.cancelScheduledValues(audioContext.currentTime);
   masterGain.gain.setTargetAtTime(.0001,audioContext.currentTime,.18);
   updateSoundButton();
