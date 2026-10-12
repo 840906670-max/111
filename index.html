@@ -32,7 +32,7 @@
 <main class="page">
 <header class="heading"><span class="eyebrow">SUMMER ISLAND</span><h1>刘小昱的海岛</h1></header>
 <section class="scene" id="scene" role="button" tabindex="0" aria-label="点击画面切换动作" aria-busy="true">
-<video id="island-video" class="video-layer is-current" poster="assets/renderedShort/poster.jpg" autoplay muted loop playsinline preload="auto" width="1920" height="1080" aria-label="完整渲染的海岛动画"></video>
+<video id="island-video" class="video-layer is-current" poster="assets/rendered1080/poster.jpg" autoplay muted loop playsinline preload="auto" width="1920" height="1080" aria-label="完整渲染的海岛动画"></video>
 <video id="incoming-video" class="video-layer" muted loop playsinline preload="metadata" width="1920" height="1080" aria-hidden="true"></video>
 <div class="controls" aria-label="动画控制"><button class="control-button action-switch" id="action-switch" type="button" aria-label="切换动作">点击画面</button><button class="control-button invite" id="invite-friend" type="button" aria-pressed="false">邀请他上岛</button></div>
 <button class="sound-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="开启环境音">开启声音</button>
@@ -52,8 +52,8 @@ let audioContext,masterGain,audioStarted=false,audioMuted=false,chimeTimer=0;
 const qualitySetting=new URLSearchParams(location.search).get('quality');
 const detectedMobile=/MicroMessenger|iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(window.matchMedia('(pointer:coarse)').matches&&window.matchMedia('(max-width:1366px)').matches);
 const mobilePlayback=qualitySetting==='mobile'||(qualitySetting!=='high'&&detectedMobile);
-const videoFolder='assets/renderedShort';
-const assetVersion='short-v1';
+const videoFolder=mobilePlayback?'assets/renderedMobile':'assets/rendered1080';
+const assetVersion='20261011c';
 function sourceFor(index=actionIndex,friend=withFriend){return videoFolder+'/'+actions[index]+'-'+(friend?'duo':'solo')+'.mp4?v='+assetVersion}
 function bufferedAhead(element){
   if(!Number.isFinite(element.currentTime)||!element.buffered)return 0;
@@ -87,7 +87,7 @@ function releaseVideo(element){
 }
 function scheduleNextPreload(){
   clearTimeout(preloadTimer);
-  if(document.hidden||isChanging)return;
+  if(!mobilePlayback||document.hidden||isChanging)return;
   const nextSource=sourceFor((actionIndex+1)%actions.length,withFriend);
   const candidate=standbyVideo;
   const attempt=()=>{
@@ -174,7 +174,7 @@ function loadAction(nextIndex,nextFriend,keepTime=false){
   clearVideoEvents(target);
   const finishWhenStable=()=>{
     if(id!==requestId)return;
-    if(!hasSafeBuffer(target,2.5)){
+    if(!hasSafeBuffer(target,mobilePlayback?2.5:1.5)){
       clearTimeout(readyTimer);
       readyTimer=setTimeout(finishWhenStable,120);
       return;
