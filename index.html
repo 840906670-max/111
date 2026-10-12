@@ -293,7 +293,7 @@ function startAmbience(){
   if(!audioContext&&!buildAmbience()){soundToggle.hidden=true;return}
   audioStarted=true;
   audioMuted=false;
-  musicAudio.volume=.125;
+  musicAudio.volume=.0375;
   musicAudio.play().catch(()=>{});
   audioContext.resume().then(()=>{
     masterGain.gain.cancelScheduledValues(audioContext.currentTime);
