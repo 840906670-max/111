@@ -36,7 +36,7 @@
 <video id="incoming-video" class="video-layer" muted loop playsinline preload="metadata" width="1920" height="1080" aria-hidden="true"></video>
 <audio id="music-audio" src="assets/audio/gentle-guitar-loop.mp3" loop preload="metadata" playsinline aria-hidden="true"></audio>
 <div class="controls" aria-label="动画控制"><button class="control-button action-switch" id="action-switch" type="button" aria-label="切换动作">点击画面</button><button class="control-button invite" id="invite-friend" type="button" aria-pressed="false">邀请他上岛</button></div>
-<button class="sound-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="开启环境音">开启声音</button>
+<button class="sound-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="开启音乐和环境音">开启音乐</button>
 <noscript><p class="loading">请开启 JavaScript 观看动画。</p></noscript>
 </section>
 </main>
@@ -286,8 +286,8 @@ function scheduleChime(){
 function updateSoundButton(){
   const audible=audioStarted&&!audioMuted;
   soundToggle.setAttribute('aria-pressed',String(audible));
-  soundToggle.textContent=audible?'静音':'开启声音';
-  soundToggle.setAttribute('aria-label',audible?'关闭环境音':'开启环境音');
+  soundToggle.textContent=audible?'静音':'开启音乐';
+  soundToggle.setAttribute('aria-label',audible?'关闭音乐和环境音':'开启音乐和环境音');
 }
 function startAmbience(){
   if(!audioContext&&!buildAmbience()){soundToggle.hidden=true;return}
