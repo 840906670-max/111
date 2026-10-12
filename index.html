@@ -34,6 +34,7 @@
 <section class="scene" id="scene" role="button" tabindex="0" aria-label="点击画面切换动作" aria-busy="true">
 <video id="island-video" class="video-layer is-current" poster="assets/rendered1080/poster.jpg" autoplay muted loop playsinline preload="auto" width="1920" height="1080" aria-label="完整渲染的海岛动画"></video>
 <video id="incoming-video" class="video-layer" muted loop playsinline preload="metadata" width="1920" height="1080" aria-hidden="true"></video>
+<audio id="music-audio" src="assets/audio/gentle-guitar-loop.mp3" loop preload="metadata" playsinline aria-hidden="true"></audio>
 <div class="controls" aria-label="动画控制"><button class="control-button action-switch" id="action-switch" type="button" aria-label="切换动作">点击画面</button><button class="control-button invite" id="invite-friend" type="button" aria-pressed="false">邀请他上岛</button></div>
 <button class="sound-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="开启环境音">开启声音</button>
 <noscript><p class="loading">请开启 JavaScript 观看动画。</p></noscript>
@@ -45,10 +46,11 @@ const scene=document.getElementById('scene');
 const actionSwitch=document.getElementById('action-switch');
 const invite=document.getElementById('invite-friend');
 const soundToggle=document.getElementById('sound-toggle');
+const musicAudio=document.getElementById('music-audio');
 let activeVideo=document.getElementById('island-video');
 let standbyVideo=document.getElementById('incoming-video');
 let actionIndex=1,withFriend=false,requestId=0,isChanging=false,hasLoaded=false,loadTimer=0,readyTimer=0,preloadTimer=0;
-let audioContext,masterGain,audioStarted=false,audioMuted=false,chimeTimer=0,guitarTimer=0,guitarStep=0;
+let audioContext,masterGain,audioStarted=false,audioMuted=false,chimeTimer=0;
 const qualitySetting=new URLSearchParams(location.search).get('quality');
 const detectedMobile=/MicroMessenger|iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(window.matchMedia('(pointer:coarse)').matches&&window.matchMedia('(max-width:1366px)').matches);
 const mobilePlayback=qualitySetting==='mobile'||(qualitySetting!=='high'&&detectedMobile);
@@ -281,40 +283,6 @@ function scheduleChime(){
   oscillator.stop(now+3.2);
   chimeTimer=setTimeout(scheduleChime,8500+Math.random()*6500);
 }
-function scheduleGuitar(){
-  clearTimeout(guitarTimer);
-  if(!audioStarted||audioMuted||!audioContext)return;
-  const now=audioContext.currentTime+.08;
-  const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];
-  const frequency=notes[guitarStep%notes.length];
-  guitarStep+=1;
-  const pluck=audioContext.createOscillator();
-  const body=audioContext.createOscillator();
-  const pluckGain=audioContext.createGain();
-  const bodyGain=audioContext.createGain();
-  const filter=audioContext.createBiquadFilter();
-  pluck.type='triangle';
-  pluck.frequency.setValueAtTime(frequency,now);
-  body.type='sine';
-  body.frequency.setValueAtTime(frequency*2,now);
-  filter.type='lowpass';
-  filter.frequency.value=1900;
-  filter.Q.value=.65;
-  pluckGain.gain.setValueAtTime(.0001,now);
-  pluckGain.gain.exponentialRampToValueAtTime(.028,now+.025);
-  pluckGain.gain.exponentialRampToValueAtTime(.0001,now+1.85);
-  bodyGain.gain.setValueAtTime(.0001,now);
-  bodyGain.gain.exponentialRampToValueAtTime(.006,now+.02);
-  bodyGain.gain.exponentialRampToValueAtTime(.0001,now+1.4);
-  pluck.connect(pluckGain).connect(filter);
-  body.connect(bodyGain).connect(filter);
-  filter.connect(masterGain);
-  pluck.start(now);
-  body.start(now);
-  pluck.stop(now+2);
-  body.stop(now+1.55);
-  guitarTimer=setTimeout(scheduleGuitar,2200);
-}
 function updateSoundButton(){
   const audible=audioStarted&&!audioMuted;
   soundToggle.setAttribute('aria-pressed',String(audible));
@@ -323,13 +291,14 @@ function updateSoundButton(){
 }
 function startAmbience(){
   if(!audioContext&&!buildAmbience()){soundToggle.hidden=true;return}
+  audioStarted=true;
+  audioMuted=false;
+  musicAudio.volume=.58;
+  musicAudio.play().catch(()=>{});
   audioContext.resume().then(()=>{
-    audioStarted=true;
-    audioMuted=false;
     masterGain.gain.cancelScheduledValues(audioContext.currentTime);
     masterGain.gain.setTargetAtTime(.085,audioContext.currentTime,.7);
     scheduleChime();
-    scheduleGuitar();
     updateSoundButton();
   }).catch(()=>{});
 }
@@ -337,7 +306,7 @@ function muteAmbience(){
   if(!audioContext)return;
   audioMuted=true;
   clearTimeout(chimeTimer);
-  clearTimeout(guitarTimer);
+  musicAudio.pause();
   masterGain.gain.cancelScheduledValues(audioContext.currentTime);
   masterGain.gain.setTargetAtTime(.0001,audioContext.currentTime,.18);
   updateSoundButton();
@@ -363,9 +332,11 @@ document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
     activeVideo.pause();
     standbyVideo.pause();
+    musicAudio.pause();
     if(audioContext&&audioContext.state==='running')audioContext.suspend().catch(()=>{});
   }else{
     resumeVideos();
+    if(audioStarted&&!audioMuted)musicAudio.play().catch(()=>{});
     if(audioStarted&&!audioMuted&&audioContext)audioContext.resume().catch(()=>{});
   }
 });
